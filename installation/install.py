@@ -1,10 +1,21 @@
 import os,platform
 
-dependences = 'requirements.txt'
+# get os
+system = platform.system()
+isWindows = system == 'Windows'
 
+# file dependeces
+dependences = 'installation\\requirements.txt' if isWindows else 'installation/requirements.txt'
+
+# install virtualven and creation ven
 os.system('pip install virtualenv')
 os.system('virtualenv venv')
 
-commandOS = 'venv/Scripts/activate.bat' if platform.system() == 'Windows' else '. venv/bin/activate'
+# activate env
+commandOS = 'venv\\Scripts\\activate.bat' if platform.system() == 'Windows' else '. venv/bin/activate'
 
-os.system('{}; pip install -r {}'.format(commandOS,dependences))
+# join comands
+join = '&' if isWindows else ';'
+
+# install requirementes with pip
+os.system('{} {} pip install -r {}'.format(commandOS,join,dependences))
