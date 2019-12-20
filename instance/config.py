@@ -3,11 +3,13 @@ import os
 
 class Config(object):
     """Parent configuration class."""
+    FLASK_APP="run.py"
+    SECRET="some-very-long-string-of-random-characters-CHANGE-TO-YOUR-LIKING"
+    APP_SETTINGS="development"
     ENV = 'development'
     DEBUG = False
     CSRF_ENABLED = True
-    SECRET = os.getenv('SECRET')
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')  
+    
 
 
 class DevelopmentConfig(Config):
