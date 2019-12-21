@@ -19,9 +19,14 @@ class SqliteDAOUser(DAO.UserDAO):
         except (ValueError, AttributeError) as e:
             print('Error: {}'.format(e))
             return False
-        
-        if user.name == '' or user.lastName == '' or user.email == '':
-            print('Error: empty fields')
+
+        try:
+            if user.name == '' or user.lastName == '' or user.email == '':
+                raise Error('empty fields')
+                #print('Error: empty fields')
+                return False
+        except Error as e:
+            print('Error: {}'.format(e))
             return False
             
         cursor = self.connection.cursor()        
@@ -45,7 +50,8 @@ class SqliteDAOUser(DAO.UserDAO):
         try:
             cursor.execute(sql)
             if cursor.rowcount == 0:
-                print('Error: no found row, no deleted')    
+                raise Error('no found row, no deleted')
+                #print('Error: no found row, no deleted')    
                 return False    
         except Error as e:
             print('Error: {}'.format(e))
@@ -62,8 +68,13 @@ class SqliteDAOUser(DAO.UserDAO):
             print('Error: {}'.format(e))
             return False
 
-        if user.name == '' or user.lastName == '' or user.email == '':
-            print('Error: empty fields')
+        try:
+            if user.name == '' or user.lastName == '' or user.email == '':
+                raise Error('empty fields')
+                #print('Error: empty fields')
+                return False
+        except Error as e:
+            print('Error: {}'.format(e))
             return False        
         
         cursor = self.connection.cursor()
@@ -73,7 +84,8 @@ class SqliteDAOUser(DAO.UserDAO):
         try:
             cursor.execute(sql,dataUser)
             if cursor.rowcount == 0:
-                print('Error: no found row, no updated')    
+                raise Error(' no found row, no updated3')
+                #print('Error: no found row, no updated')    
                 return False 
         except Error as e:
             print('Error: {}'.format(e))
@@ -201,18 +213,21 @@ class DAOManagerSqlite(DAO.DAOManager):
         cursor.execute(sql)
         
     
-    def endTransaction(self):
-
-        try:
-            self.commit()
+    def endTransaction(self,state):
+        cursor = self.conecction.cursor()
+        try:           
+            if not state:
+                raise Error('problem query')
+            sql = """COMMIT;""" 
+            cursor.execute(sql)
             return True
         except Error as e:
             print('Error: {}'.format(e))
-            sql = """ROLLBACK;"""
-            cursor = self.conecction.cursor()
+            sql = """ROLLBACK;"""            
             cursor.execute(sql)
             return False
-    
+
+        
     
     def commit(self):
 

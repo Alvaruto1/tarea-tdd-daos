@@ -1,10 +1,11 @@
-import unittest
+import unittest, time
+from functools import reduce
 from app import create_app
 from app.data.sqliteDAO import DAOManagerSqlite
 from app.data.DAO import DAOManager
 from app.data.models import User
 from db import create_tables
-import time
+
 
 class UserTestCase(unittest.TestCase):
 
@@ -17,7 +18,7 @@ class UserTestCase(unittest.TestCase):
             self.daoManager.do(DAOManager.USER, DAOManager.CREATE,user)
         self.daoManager.commit()
 
-    def test_user_creation(self):        
+    """def test_user_creation(self):        
         
         # format date dd/mm/aa
         user = User('AlvaroCre','Niño','12-15-2019','alvaruto@gmail.com')
@@ -123,9 +124,26 @@ class UserTestCase(unittest.TestCase):
     def test_user_get_all(self):        
            
         usersGet = self.daoManager.do(DAOManager.USER, DAOManager.GET_ALL)
-        self.assertIsInstance(usersGet, list)
+        self.assertIsInstance(usersGet, list)"""
 
-    
+
+    def test_user_transaction(self):
+        
+        resL = []
+        self.daoManager.beginTransaction()
+        
+        # create user
+        user = User('AlvaroCre','Niño','12-12/19','alvaruto@gmail.com')
+        resL.append(self.daoManager.do(DAOManager.USER, DAOManager.CREATE,user))
+
+        # update user
+        user = User('AlvaroUpdate','Niño','12/12/19','alvaruto@gmail.com')
+        user.id = 2
+        resL.append(self.daoManager.do(DAOManager.USER, DAOManager.UPDATE,user))
+        state = reduce(lambda a,b : a and b,resL)
+        
+        res = self.daoManager.endTransaction(state)
+        self.assertFalse(res)  
     
         
 
